@@ -1,0 +1,136 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ArrowLeft } from "lucide-react";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+
+export default function Auth() {
+  const navigate = useNavigate();
+  const [step, setStep] = useState<"phone" | "otp">("phone");
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [timer, setTimer] = useState(59);
+  const [error, setError] = useState("");
+  const [attempts, setAttempts] = useState(0);
+
+  const isPhoneValid = phone.replace(/\D/g, "").length === 10;
+
+  const handleSendCode = () => {
+    if (!isPhoneValid) return;
+    setStep("otp");
+    setTimer(59);
+    const interval = setInterval(() => {
+      setTimer((t) => {
+        if (t <= 1) { clearInterval(interval); return 0; }
+        return t - 1;
+      });
+    }, 1000);
+  };
+
+  const handleVerify = () => {
+    if (otp.length < 4) return;
+    // Mock: any code works
+    if (otp === "0000") {
+      setError("Неверный код, осталось " + (2 - attempts) + " попыток");
+      setAttempts(attempts + 1);
+      if (attempts >= 2) {
+        setError("Слишком много попыток. Попробуйте через 10 минут");
+      }
+      return;
+    }
+    navigate("/");
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex flex-col">
+      <header className="px-4 py-3 flex items-center gap-3">
+        <button onClick={() => step === "otp" ? setStep("phone") : navigate(-1)} className="p-1.5 rounded-xl hover:bg-muted">
+          <ArrowLeft size={22} />
+        </button>
+      </header>
+
+      <div className="flex-1 flex flex-col items-center justify-center px-6 pb-20">
+        <div className="w-full max-w-sm animate-fade-in" key={step}>
+          {/* Logo */}
+          <div className="flex items-center justify-center gap-2 mb-10">
+            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
+              <span className="text-primary-foreground font-bold text-lg">Ж</span>
+            </div>
+            <span className="text-xl font-bold text-foreground">Жомуш.kg</span>
+          </div>
+
+          {step === "phone" ? (
+            <>
+              <h1 className="text-xl font-bold text-foreground text-center mb-2">Введите номер телефона</h1>
+              <p className="text-sm text-muted-foreground text-center mb-6">Отправим SMS с кодом подтверждения</p>
+
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-foreground">+996</span>
+                <Input
+                  type="tel"
+                  placeholder="700 123 456"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="pl-14 rounded-xl h-12 text-base bg-muted border-0"
+                  maxLength={12}
+                />
+              </div>
+
+              <Button
+                className="w-full mt-4 rounded-xl h-12 text-base"
+                disabled={!isPhoneValid}
+                onClick={handleSendCode}
+              >
+                Получить код
+              </Button>
+
+              <p className="text-xs text-muted-foreground text-center mt-4">
+                Нажимая «Получить код», вы соглашаетесь с{" "}
+                <a href="#" className="text-primary hover:underline">Политикой конфиденциальности</a>
+              </p>
+            </>
+          ) : (
+            <>
+              <h1 className="text-xl font-bold text-foreground text-center mb-2">Введите код</h1>
+              <p className="text-sm text-muted-foreground text-center mb-6">
+                Код отправлен на +996 {phone}
+              </p>
+
+              <div className="flex justify-center mb-4">
+                <InputOTP maxLength={4} value={otp} onChange={setOtp}>
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} className="w-14 h-14 text-lg rounded-xl" />
+                    <InputOTPSlot index={1} className="w-14 h-14 text-lg rounded-xl" />
+                    <InputOTPSlot index={2} className="w-14 h-14 text-lg rounded-xl" />
+                    <InputOTPSlot index={3} className="w-14 h-14 text-lg rounded-xl" />
+                  </InputOTPGroup>
+                </InputOTP>
+              </div>
+
+              {error && <p className="text-sm text-destructive text-center mb-3">{error}</p>}
+
+              <Button
+                className="w-full rounded-xl h-12 text-base"
+                disabled={otp.length < 4}
+                onClick={handleVerify}
+              >
+                Подтвердить
+              </Button>
+
+              <p className="text-sm text-muted-foreground text-center mt-4">
+                {timer > 0 ? (
+                  <>Отправить снова через 0:{timer.toString().padStart(2, "0")}</>
+                ) : (
+                  <button className="text-primary font-medium hover:underline" onClick={handleSendCode}>
+                    Отправить снова
+                  </button>
+                )}
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
