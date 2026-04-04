@@ -1,8 +1,9 @@
-import { Link, useLocation } from "react-router-dom";
-import { LayoutGrid, Heart, MessageCircle, User, Bell, Search, ChevronDown } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { LayoutGrid, Heart, MessageCircle, User, Bell, Search, ChevronDown, SlidersHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useFilters } from "@/context/FilterContext";
 
 const navItems = [
   { path: "/", label: "Вакансии", icon: LayoutGrid },
@@ -11,9 +12,12 @@ const navItems = [
   { path: "/profile", label: "Кабинет", icon: User },
 ];
 
-export default function AppLayout({ children }: { children: React.ReactNode }) {
+export default function AppLayout({ children, hideMainPadding }: { children: React.ReactNode, hideMainPadding?: boolean }) {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { activeFilterGroupsCount } = useFilters();
   const [searchQuery, setSearchQuery] = useState("");
+  const isMainPage = location.pathname === "/";
 
   return (
     <div className="flex min-h-screen bg-background">
@@ -28,14 +32,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </Link>
         </div>
 
-        <nav className="flex-1 px-3 space-y-1">
+        <nav className="flex-1 px-3 space-y-1 pt-10">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-colors ${
                   isActive
                     ? "bg-sidebar-accent text-sidebar-accent-foreground"
                     : "text-sidebar-foreground hover:bg-muted"
@@ -54,7 +58,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="p-4 border-t border-sidebar-border">
-          <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors w-full px-4 py-2 rounded-xl hover:bg-muted">
+          <button className="flex items-center gap-2 text-base text-muted-foreground hover:text-foreground transition-colors w-full px-4 py-2 rounded-xl hover:bg-muted">
             <span>Ищу работу</span>
             <ChevronDown size={16} />
           </button>
@@ -62,64 +66,68 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Main content */}
-      <div className="flex-1 lg:ml-[260px] flex flex-col min-h-screen">
+      <div className="flex-1 lg:ml-[260px] flex flex-col min-h-screen max-w-full overflow-x-hidden">
         {/* Top header - desktop */}
-        <header className="hidden lg:flex items-center gap-4 px-6 py-4 border-b border-border bg-background sticky top-0 z-20">
-          <div className="flex-1 max-w-xl relative">
-            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Поиск вакансий..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-muted border-0 rounded-xl h-11"
-            />
-          </div>
-          <Link to="/notifications" className="relative p-2 rounded-xl hover:bg-muted transition-colors">
-            <Bell size={22} className="text-muted-foreground" />
-            <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-destructive rounded-full" />
-          </Link>
-          <div className="flex items-center gap-3 pl-2">
-            <div className="w-9 h-9 rounded-full bg-primary-light flex items-center justify-center">
-              <User size={18} className="text-primary" />
+        {isMainPage && (
+          <header className="hidden lg:flex items-center gap-4 px-6 py-4 border-b border-border bg-background sticky top-0 z-20 h-[73px]">
+            <div className="flex-1 max-w-xl flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Поиск вакансий..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 bg-muted border-0 rounded-xl h-11"
+                />
+              </div>
+              <button 
+                onClick={() => navigate("/filters")}
+                className="p-2.5 px-4 rounded-xl bg-muted hover:bg-muted/80 transition-colors flex items-center gap-2 text-muted-foreground hover:text-foreground border border-transparent hover:border-border"
+              >
+                <SlidersHorizontal size={20} />
+                <span className="text-base font-medium">
+                  Фильтры {activeFilterGroupsCount > 0 && `· ${activeFilterGroupsCount}`}
+                </span>
+              </button>
             </div>
-          </div>
-        </header>
+          </header>
+        )}
 
         {/* Mobile header */}
-        <header className="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-border bg-background sticky top-0 z-20">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-bold text-sm">Ж</span>
-          </div>
-          <div className="flex-1 relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Поиск..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 bg-muted border-0 rounded-xl h-9 text-sm"
-            />
-          </div>
-          <Link to="/notifications" className="relative p-1.5">
-            <Bell size={20} className="text-muted-foreground" />
-            <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-destructive rounded-full" />
-          </Link>
-        </header>
+        {isMainPage && (
+          <header className="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-border bg-background sticky top-0 z-20 h-[64px]">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
+              <span className="text-primary-foreground font-bold text-base">Ж</span>
+            </div>
+            <div className="flex-1 flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Поиск..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 bg-muted border-0 rounded-xl h-9 text-base"
+                />
+              </div>
+              <button 
+                onClick={() => navigate("/filters")}
+                className="p-1.5 rounded-lg bg-muted flex items-center justify-center text-muted-foreground relative"
+              >
+                <SlidersHorizontal size={18} />
+                {activeFilterGroupsCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center border border-background">
+                    {activeFilterGroupsCount}
+                  </span>
+                )}
+              </button>
+            </div>
+          </header>
+        )}
 
         {/* Page content */}
-        <main className="flex-1 pb-20 lg:pb-8">
+        <main className={`flex-1 min-w-0 ${hideMainPadding ? "" : "pb-20 lg:pb-8"}`}>
           {children}
         </main>
-
-        {/* Footer - desktop only, inside content area */}
-        <footer className="hidden lg:block px-6 py-6 border-t border-border text-sm text-muted-foreground">
-          <div className="flex items-center justify-between">
-            <span>© 2026 Жомуш.kg — Поиск работы в Кыргызстане</span>
-            <div className="flex gap-4">
-              <a href="#" className="hover:text-foreground transition-colors">Политика конфиденциальности</a>
-              <a href="#" className="hover:text-foreground transition-colors">Пользовательское соглашение</a>
-            </div>
-          </div>
-        </footer>
       </div>
 
       {/* Bottom navigation - mobile */}

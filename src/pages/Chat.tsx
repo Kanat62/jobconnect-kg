@@ -39,7 +39,7 @@ export default function Chat() {
                 className="flex items-center gap-3 p-3 rounded-2xl hover:bg-muted transition-colors"
               >
                 <div className="relative flex-shrink-0">
-                  <div className="w-11 h-11 rounded-full bg-primary-light flex items-center justify-center text-primary font-bold text-sm">
+                  <div className="w-11 h-11 rounded-full bg-primary-light flex items-center justify-center text-primary font-bold text-base">
                     {chat.company[0]}
                   </div>
                   {chat.online && (
@@ -48,11 +48,11 @@ export default function Chat() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-sm text-foreground truncate">{chat.company}</span>
+                    <span className="font-semibold text-base text-foreground truncate">{chat.company}</span>
                     <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">{chat.time}</span>
                   </div>
                   <p className="text-xs text-muted-foreground truncate mt-0.5">{chat.jobTitle}</p>
-                  <p className="text-sm text-muted-foreground truncate mt-0.5">{chat.lastMessage}</p>
+                  <p className="text-base text-muted-foreground truncate mt-0.5">{chat.lastMessage}</p>
                 </div>
                 {chat.unread > 0 && (
                   <span className="w-5 h-5 bg-primary text-primary-foreground text-[10px] font-bold rounded-full flex items-center justify-center flex-shrink-0">
@@ -66,7 +66,7 @@ export default function Chat() {
           <div className="text-center py-20">
             <MessageCircle size={48} className="mx-auto text-muted-foreground mb-4" />
             <p className="font-semibold text-foreground">Пока нет сообщений</p>
-            <p className="text-sm text-muted-foreground mt-1">Откликайтесь на вакансии и общайтесь с работодателями</p>
+            <p className="text-base text-muted-foreground mt-1">Откликайтесь на вакансии и общайтесь с работодателями</p>
             <Button asChild className="mt-6 rounded-xl">
               <Link to="/">Найти вакансии</Link>
             </Button>

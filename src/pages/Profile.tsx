@@ -13,8 +13,9 @@ const menuItems = [
 export default function Profile() {
   return (
     <AppLayout>
-      <div className="px-4 lg:px-6 py-4 lg:py-6 max-w-2xl">
-        <h1 className="text-xl font-bold text-foreground mb-6">Кабинет</h1>
+        <h1 className="px-4 lg:px-6 pt-4 lg:pt-6 text-xl font-bold text-foreground ">Кабинет</h1>
+
+      <div className="px-4 lg:px-6 py-4 lg:py-6 max-w-2xl mx-auto">
 
         {/* User info */}
         <div className="flex items-center gap-4 mb-6 p-4 bg-card border border-border rounded-2xl">

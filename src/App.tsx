@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index";
+import { FilterProvider } from "@/context/FilterContext";
 import NotFound from "./pages/NotFound";
 import Onboarding from "./pages/Onboarding";
 import Auth from "./pages/Auth";
@@ -15,6 +16,7 @@ import ChatDialog from "./pages/ChatDialog";
 import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
 import Resume from "./pages/Resume";
+import Filters from "./pages/Filters";
 
 const queryClient = new QueryClient();
 
@@ -24,20 +26,23 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/onboarding" element={<Onboarding />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/job/:id" element={<JobDetail />} />
-          <Route path="/favorites" element={<Favorites />} />
-          <Route path="/applications" element={<Applications />} />
-          <Route path="/chat" element={<Chat />} />
-          <Route path="/chat/:id" element={<ChatDialog />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/resume" element={<Resume />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <FilterProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/onboarding" element={<Onboarding />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/job/:id" element={<JobDetail />} />
+            <Route path="/favorites" element={<Favorites />} />
+            <Route path="/applications" element={<Applications />} />
+            <Route path="/chat" element={<Chat />} />
+            <Route path="/chat/:id" element={<ChatDialog />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/resume" element={<Resume />} />
+            <Route path="/filters" element={<Filters />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </FilterProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
