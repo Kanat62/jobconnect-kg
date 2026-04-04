@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index";
 import { FilterProvider } from "@/context/FilterContext";
+import { RoleProvider } from "@/context/RoleContext";
 import NotFound from "./pages/NotFound";
 import Onboarding from "./pages/Onboarding";
 import Auth from "./pages/Auth";
@@ -17,6 +18,13 @@ import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
 import Resume from "./pages/Resume";
 import Filters from "./pages/Filters";
+import MyVacancies from "./pages/employer/MyVacancies";
+import CreateVacancy from "./pages/employer/CreateVacancy";
+import Applicants from "./pages/employer/Applicants";
+import EmployerApplicantsList from "./pages/employer/EmployerApplicantsList";
+import Pricing from "./pages/employer/Pricing";
+import EmployerProfile from "./pages/employer/EmployerProfile";
+import CompanyProfile from "./pages/employer/CompanyProfile";
 
 const queryClient = new QueryClient();
 
@@ -26,23 +34,34 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <FilterProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/job/:id" element={<JobDetail />} />
-            <Route path="/favorites" element={<Favorites />} />
-            <Route path="/applications" element={<Applications />} />
-            <Route path="/chat" element={<Chat />} />
-            <Route path="/chat/:id" element={<ChatDialog />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/resume" element={<Resume />} />
-            <Route path="/filters" element={<Filters />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </FilterProvider>
+        <RoleProvider>
+          <FilterProvider>
+            <Routes>
+              {/* Seeker routes */}
+              <Route path="/" element={<Index />} />
+              <Route path="/onboarding" element={<Onboarding />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/job/:id" element={<JobDetail />} />
+              <Route path="/favorites" element={<Favorites />} />
+              <Route path="/applications" element={<Applications />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/chat/:id" element={<ChatDialog />} />
+              <Route path="/notifications" element={<Notifications />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/resume" element={<Resume />} />
+              <Route path="/filters" element={<Filters />} />
+              {/* Employer routes */}
+              <Route path="/employer/vacancies" element={<MyVacancies />} />
+              <Route path="/employer/create-vacancy" element={<CreateVacancy />} />
+              <Route path="/employer/applicants/:vacancyId" element={<Applicants />} />
+              <Route path="/employer/applicants" element={<EmployerApplicantsList />} />
+              <Route path="/employer/pricing" element={<Pricing />} />
+              <Route path="/employer/profile" element={<EmployerProfile />} />
+              <Route path="/employer/company-profile" element={<CompanyProfile />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </FilterProvider>
+        </RoleProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
