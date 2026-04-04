@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutGrid, Heart, MessageCircle, User, Search, ChevronDown, SlidersHorizontal, Briefcase, Inbox, Building2 } from "lucide-react";
+import { LayoutGrid, Heart, MessageCircle, User, Search, ChevronDown, SlidersHorizontal, Briefcase, Inbox, Building2, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
@@ -20,7 +20,8 @@ const seekerNavItems = [
 ];
 
 const employerNavItems = [
-  { path: "/employer/vacancies", label: "Вакансии", icon: Briefcase },
+  { path: "/employer/candidates", label: "Кандидаты", icon: Users },
+  { path: "/employer/vacancies", label: "Мои вакансии", icon: Briefcase },
   { path: "/employer/applicants", label: "Отклики", icon: Inbox },
   { path: "/chat", label: "Чат", icon: MessageCircle, badge: 2 },
   { path: "/employer/profile", label: "Кабинет", icon: Building2 },
@@ -34,7 +35,7 @@ export default function AppLayout({ children, hideMainPadding }: { children: Rea
   const [searchQuery, setSearchQuery] = useState("");
 
   const navItems = role === "employer" ? employerNavItems : seekerNavItems;
-  const isMainPage = location.pathname === "/" || location.pathname === "/employer/vacancies";
+  const isMainPage = location.pathname === "/" || location.pathname === "/employer/candidates";
 
   const handleRoleSwitch = (newRole: "seeker" | "employer") => {
     if (newRole === "employer" && !hasCompanyProfile) {
@@ -43,7 +44,7 @@ export default function AppLayout({ children, hideMainPadding }: { children: Rea
       return;
     }
     switchRole(newRole);
-    navigate(newRole === "employer" ? "/employer/vacancies" : "/");
+    navigate(newRole === "employer" ? "/employer/candidates" : "/");
   };
 
   return (
@@ -51,7 +52,7 @@ export default function AppLayout({ children, hideMainPadding }: { children: Rea
       {/* Sidebar - desktop */}
       <aside className="hidden lg:flex flex-col w-[260px] border-r border-sidebar-border bg-sidebar fixed h-full z-30">
         <div className="p-6 pb-4">
-          <Link to={role === "employer" ? "/employer/vacancies" : "/"} className="flex items-center gap-2">
+          <Link to={role === "employer" ? "/employer/candidates" : "/"} className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-lg">Ж</span>
             </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Upload } from "lucide-react";
+import AppLayout from "@/components/AppLayout";
+import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,19 +27,13 @@ export default function CompanyProfile() {
   const handleSubmit = () => {
     setHasCompanyProfile(true);
     toast.success("Профиль компании создан!");
-    navigate("/employer/vacancies");
+    navigate("/employer/candidates");
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="flex items-center gap-3 px-4 lg:px-6 py-4 border-b border-border bg-background sticky top-0 z-20">
-        <button onClick={() => navigate(-1)} className="p-1.5 rounded-lg hover:bg-muted">
-          <ArrowLeft size={20} />
-        </button>
-        <h1 className="text-lg font-bold">Профиль компании</h1>
-      </header>
-
-      <div className="px-4 lg:px-6 py-6 max-w-xl mx-auto space-y-4">
+    <AppLayout>
+      <div className="px-4 lg:px-6 py-6 max-w-xl space-y-4">
+        <h1 className="text-xl font-bold text-foreground">Профиль компании</h1>
         <p className="text-sm text-muted-foreground">Заполните профиль компании, чтобы начать размещать вакансии</p>
 
         <div>
@@ -101,6 +96,6 @@ export default function CompanyProfile() {
 
         <Button onClick={handleSubmit} disabled={!canSubmit} className="w-full rounded-xl mt-4">Продолжить</Button>
       </div>
-    </div>
+    </AppLayout>
   );
 }

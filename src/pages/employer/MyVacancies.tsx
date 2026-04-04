@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
-import { Plus, Eye, Heart, Users, MoreVertical, Pencil, ArrowUp, XCircle, Trash2 } from "lucide-react";
+import ConfirmModal from "@/components/ConfirmModal";
+import { Plus, Eye, Heart, Users, MoreVertical, Pencil, ArrowUp, XCircle, Trash2, Briefcase } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { mockEmployerVacancies, type EmployerVacancy } from "@/lib/mock-employer-data";
+import { useEmployer } from "@/context/EmployerContext";
+import { toast } from "sonner";
+import type { EmployerVacancy } from "@/lib/mock-employer-data";
 
 const statusConfig: Record<string, { label: string; className: string }> = {
   active: { label: "Активна", className: "bg-green-100 text-green-700 border-green-200" },
@@ -23,14 +26,15 @@ const tabs = [
 export default function MyVacancies() {
   const [activeTab, setActiveTab] = useState("active");
   const navigate = useNavigate();
+  const { vacancies, updateVacancyStatus, removeVacancy } = useEmployer();
 
-  const filtered = mockEmployerVacancies.filter((v) => {
+  const filtered = vacancies.filter((v) => {
     if (activeTab === "active") return v.status === "active" || v.status === "rejected";
     if (activeTab === "moderation") return v.status === "moderation";
     return v.status === "archived";
   });
 
-  const freeUsed = mockEmployerVacancies.filter(v => v.status === "active" || v.status === "moderation").length;
+  const freeUsed = vacancies.filter(v => v.status === "active" || v.status === "moderation").length;
 
   return (
     <AppLayout>
@@ -63,13 +67,13 @@ export default function MyVacancies() {
 
         {filtered.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-4xl mb-4">📋</p>
+            <Briefcase size={48} className="mx-auto text-muted-foreground mb-4 opacity-40" />
             <p className="font-semibold text-foreground">
-              {activeTab === "active" ? "Нет активных вакансий" : activeTab === "moderation" ? "Нет вакансий на модерации" : "Архив пуст"}
+              {activeTab === "active" ? "Создайте первую вакансию" : activeTab === "moderation" ? "Нет вакансий на модерации" : "Архив пуст"}
             </p>
             {activeTab === "active" && (
               <Button onClick={() => navigate("/employer/create-vacancy")} className="mt-4 rounded-xl">
-                Создать первую вакансию
+                Создать вакансию
               </Button>
             )}
           </div>
@@ -87,67 +91,140 @@ export default function MyVacancies() {
 
 function VacancyCard({ vacancy }: { vacancy: EmployerVacancy }) {
   const navigate = useNavigate();
+  const { updateVacancyStatus, removeVacancy } = useEmployer();
   const sc = statusConfig[vacancy.status];
 
+  const [closeConfirm, setCloseConfirm] = useState(false);
+  const [deleteStep, setDeleteStep] = useState<0 | 1 | 2>(0);
+
+  const handleClose = () => {
+    updateVacancyStatus(vacancy.id, "archived");
+    toast.success("Вакансия перемещена в архив");
+    setCloseConfirm(false);
+  };
+
+  const handleDelete = () => {
+    if (deleteStep === 1) {
+      setDeleteStep(2);
+    } else if (deleteStep === 2) {
+      removeVacancy(vacancy.id);
+      toast.success("Вакансия удалена");
+      setDeleteStep(0);
+    }
+  };
+
+  const isOnModeration = vacancy.status === "moderation";
+
   return (
-    <div className="bg-card border border-border rounded-2xl p-4 space-y-3">
-      <div className="flex items-start justify-between">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="font-semibold text-foreground">{vacancy.title}</h3>
-            <Badge variant="outline" className={`text-xs rounded-lg border ${sc.className}`}>{sc.label}</Badge>
+    <>
+      <div className="bg-card border border-border rounded-2xl p-4 space-y-3">
+        <div className="flex items-start justify-between">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="font-semibold text-foreground">{vacancy.title}</h3>
+              <Badge variant="outline" className={`text-xs rounded-lg border ${sc.className}`}>{sc.label}</Badge>
+            </div>
+            <p className="text-sm text-green-600 font-medium mt-1">{vacancy.salary}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{vacancy.city} · {vacancy.date}</p>
           </div>
-          <p className="text-sm text-green-600 font-medium mt-1">{vacancy.salary}</p>
-          <p className="text-xs text-muted-foreground mt-0.5">{vacancy.city} · {vacancy.date}</p>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-1.5 rounded-lg hover:bg-muted"><MoreVertical size={18} className="text-muted-foreground" /></button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="rounded-xl" style={{ zIndex: 300 }}>
+              <DropdownMenuItem
+                className="gap-2"
+                disabled={isOnModeration}
+                onClick={() => navigate(`/employer/edit-vacancy/${vacancy.id}`)}
+              >
+                <Pencil size={16} /> Редактировать
+                {isOnModeration && <span className="text-xs text-muted-foreground ml-auto">Дождитесь проверки</span>}
+              </DropdownMenuItem>
+              <DropdownMenuItem className="gap-2" onClick={() => navigate("/employer/pricing")}>
+                <ArrowUp size={16} /> Поднять в топ
+              </DropdownMenuItem>
+              <DropdownMenuItem className="gap-2" onClick={() => setCloseConfirm(true)}>
+                <XCircle size={16} /> Закрыть вакансию
+              </DropdownMenuItem>
+              <DropdownMenuItem className="gap-2 text-destructive" onClick={() => setDeleteStep(1)}>
+                <Trash2 size={16} /> Удалить
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="p-1.5 rounded-lg hover:bg-muted"><MoreVertical size={18} className="text-muted-foreground" /></button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="rounded-xl">
-            <DropdownMenuItem className="gap-2"><Pencil size={16} /> Редактировать</DropdownMenuItem>
-            <DropdownMenuItem className="gap-2"><ArrowUp size={16} /> Поднять в топ</DropdownMenuItem>
-            <DropdownMenuItem className="gap-2"><XCircle size={16} /> Закрыть вакансию</DropdownMenuItem>
-            <DropdownMenuItem className="gap-2 text-destructive"><Trash2 size={16} /> Удалить</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+
+        {vacancy.status === "rejected" && vacancy.rejectionReason && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">
+            <span className="font-medium">Причина отклонения:</span> {vacancy.rejectionReason}
+          </div>
+        )}
+
+        {vacancy.status === "active" && (
+          <>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1"><Eye size={14} /> {vacancy.views}</span>
+              <span className="flex items-center gap-1"><Heart size={14} /> {vacancy.favorites}</span>
+              <span className="flex items-center gap-1"><Users size={14} /> {vacancy.applications}</span>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={() => navigate(`/employer/applicants/${vacancy.id}`)} className="rounded-xl flex-1" size="sm">
+                Посмотреть кандидатов
+              </Button>
+              <Button variant="outline" className="rounded-xl flex-1" size="sm" onClick={() => navigate("/employer/candidates")}>
+                {vacancy.applications} подходящих резюме
+              </Button>
+            </div>
+          </>
+        )}
+
+        {vacancy.status === "rejected" && (
+          <Button variant="outline" className="rounded-xl w-full" size="sm" onClick={() => navigate(`/employer/edit-vacancy/${vacancy.id}`)}>
+            Исправить и отправить повторно
+          </Button>
+        )}
+
+        {vacancy.status === "archived" && (
+          <Button variant="outline" className="rounded-xl w-full" size="sm" onClick={() => updateVacancyStatus(vacancy.id, "active")}>
+            Восстановить
+          </Button>
+        )}
+
+        {vacancy.status === "moderation" && (
+          <p className="text-xs text-muted-foreground">⏳ Обычно модерация занимает до 2 часов</p>
+        )}
       </div>
 
-      {vacancy.status === "rejected" && vacancy.rejectionReason && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700">
-          <span className="font-medium">Причина отклонения:</span> {vacancy.rejectionReason}
-        </div>
-      )}
+      {/* Close confirmation */}
+      <ConfirmModal
+        open={closeConfirm}
+        onClose={() => setCloseConfirm(false)}
+        onConfirm={handleClose}
+        title="Закрыть вакансию?"
+        description="Вакансия будет перемещена в архив. Продолжить?"
+        confirmText="Закрыть вакансию"
+      />
 
-      {vacancy.status === "active" && (
-        <>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <span className="flex items-center gap-1"><Eye size={14} /> {vacancy.views}</span>
-            <span className="flex items-center gap-1"><Heart size={14} /> {vacancy.favorites}</span>
-            <span className="flex items-center gap-1"><Users size={14} /> {vacancy.applications}</span>
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={() => navigate(`/employer/applicants/${vacancy.id}`)} className="rounded-xl flex-1" size="sm">
-              Посмотреть кандидатов
-            </Button>
-            <Button variant="outline" className="rounded-xl flex-1" size="sm">
-              {vacancy.applications} подходящих резюме
-            </Button>
-          </div>
-        </>
-      )}
+      {/* Delete - step 1 */}
+      <ConfirmModal
+        open={deleteStep === 1}
+        onClose={() => setDeleteStep(0)}
+        onConfirm={() => setDeleteStep(2)}
+        title="Удалить вакансию?"
+        description="Вакансия будет полностью удалена."
+        confirmText="Удалить"
+        destructive
+      />
 
-      {vacancy.status === "rejected" && (
-        <Button variant="outline" className="rounded-xl w-full" size="sm">Исправить и отправить</Button>
-      )}
-
-      {vacancy.status === "archived" && (
-        <Button variant="outline" className="rounded-xl w-full" size="sm">Восстановить</Button>
-      )}
-
-      {vacancy.status === "moderation" && (
-        <p className="text-xs text-muted-foreground">⏳ Обычно модерация занимает до 2 часов</p>
-      )}
-    </div>
+      {/* Delete - step 2 (double confirmation) */}
+      <ConfirmModal
+        open={deleteStep === 2}
+        onClose={() => setDeleteStep(0)}
+        onConfirm={() => { removeVacancy(vacancy.id); toast.success("Вакансия удалена"); setDeleteStep(0); }}
+        title="Это действие нельзя отменить"
+        description="Вакансия и все данные о ней будут полностью удалены. Всё равно удалить?"
+        confirmText="Всё равно удалить"
+        destructive
+      />
+    </>
   );
 }
