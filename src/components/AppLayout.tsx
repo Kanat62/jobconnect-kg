@@ -1,30 +1,57 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutGrid, Heart, MessageCircle, User, Bell, Search, ChevronDown, SlidersHorizontal } from "lucide-react";
+import { LayoutGrid, Heart, MessageCircle, User, Search, ChevronDown, SlidersHorizontal, Briefcase, Inbox, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useFilters } from "@/context/FilterContext";
+import { useRole } from "@/context/RoleContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-const navItems = [
+const seekerNavItems = [
   { path: "/", label: "Вакансии", icon: LayoutGrid },
   { path: "/favorites", label: "Избранное", icon: Heart },
   { path: "/chat", label: "Чат", icon: MessageCircle, badge: 2 },
   { path: "/profile", label: "Кабинет", icon: User },
 ];
 
+const employerNavItems = [
+  { path: "/employer/vacancies", label: "Вакансии", icon: Briefcase },
+  { path: "/employer/applicants", label: "Отклики", icon: Inbox },
+  { path: "/chat", label: "Чат", icon: MessageCircle, badge: 2 },
+  { path: "/employer/profile", label: "Кабинет", icon: Building2 },
+];
+
 export default function AppLayout({ children, hideMainPadding }: { children: React.ReactNode, hideMainPadding?: boolean }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { activeFilterGroupsCount } = useFilters();
+  const { role, switchRole, hasCompanyProfile } = useRole();
   const [searchQuery, setSearchQuery] = useState("");
-  const isMainPage = location.pathname === "/";
+
+  const navItems = role === "employer" ? employerNavItems : seekerNavItems;
+  const isMainPage = location.pathname === "/" || location.pathname === "/employer/vacancies";
+
+  const handleRoleSwitch = (newRole: "seeker" | "employer") => {
+    if (newRole === "employer" && !hasCompanyProfile) {
+      switchRole("employer");
+      navigate("/employer/company-profile");
+      return;
+    }
+    switchRole(newRole);
+    navigate(newRole === "employer" ? "/employer/vacancies" : "/");
+  };
 
   return (
     <div className="flex min-h-screen bg-background">
       {/* Sidebar - desktop */}
       <aside className="hidden lg:flex flex-col w-[260px] border-r border-sidebar-border bg-sidebar fixed h-full z-30">
         <div className="p-6 pb-4">
-          <Link to="/" className="flex items-center gap-2">
+          <Link to={role === "employer" ? "/employer/vacancies" : "/"} className="flex items-center gap-2">
             <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-lg">Ж</span>
             </div>
@@ -58,17 +85,35 @@ export default function AppLayout({ children, hideMainPadding }: { children: Rea
         </nav>
 
         <div className="p-4 border-t border-sidebar-border">
-          <button className="flex items-center gap-2 text-base text-muted-foreground hover:text-foreground transition-colors w-full px-4 py-2 rounded-xl hover:bg-muted">
-            <span>Ищу работу</span>
-            <ChevronDown size={16} />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-2 text-base text-muted-foreground hover:text-foreground transition-colors w-full px-4 py-2 rounded-xl hover:bg-muted">
+                <span>{role === "employer" ? "Ищу сотрудника" : "Ищу работу"}</span>
+                <ChevronDown size={16} />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-[220px] rounded-xl">
+              <DropdownMenuItem
+                onClick={() => handleRoleSwitch("seeker")}
+                className={`rounded-lg ${role === "seeker" ? "bg-primary-light text-primary font-medium" : ""}`}
+              >
+                Ищу работу
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleRoleSwitch("employer")}
+                className={`rounded-lg ${role === "employer" ? "bg-primary-light text-primary font-medium" : ""}`}
+              >
+                Ищу сотрудника
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </aside>
 
       {/* Main content */}
       <div className="flex-1 lg:ml-[260px] flex flex-col min-h-screen max-w-full overflow-x-hidden">
-        {/* Top header - desktop */}
-        {isMainPage && (
+        {/* Top header - desktop (seeker main page) */}
+        {isMainPage && role === "seeker" && (
           <header className="hidden lg:flex items-center gap-4 px-6 py-4 border-b border-border bg-background sticky top-0 z-20 h-[73px]">
             <div className="flex-1 max-w-xl flex items-center gap-2">
               <div className="relative flex-1">
@@ -94,7 +139,7 @@ export default function AppLayout({ children, hideMainPadding }: { children: Rea
         )}
 
         {/* Mobile header */}
-        {isMainPage && (
+        {isMainPage && role === "seeker" && (
           <header className="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-border bg-background sticky top-0 z-20 h-[64px]">
             <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
               <span className="text-primary-foreground font-bold text-base">Ж</span>
