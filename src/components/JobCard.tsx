@@ -37,7 +37,7 @@ export default function JobCard({ job }: { job: Job }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <CompanyIcon company={job.company} />
-            <span className="text-base font-medium text-muted-foreground">{job.company}</span>
+            <span className="text-sm font-medium text-muted-foreground">{job.company}</span>
             <span className="inline-flex items-center gap-1 text-xs text-primary bg-primary-light px-2 py-0.5 rounded-full ">
               <MapPin size={12} />
               {job.city}

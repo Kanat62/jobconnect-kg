@@ -128,7 +128,7 @@ export default function AppLayout({ children, hideMainPadding }: { children: Rea
                   placeholder="Поиск вакансий..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="text-base font-medium focus:shadow pl-10 bg-muted border-0 rounded-xl h-11 outline-none "
+                  className="text-sm font-medium focus:shadow pl-10 bg-muted border-0 rounded-xl h-11 outline-none "
                 />
               </div>
               <button
@@ -136,7 +136,7 @@ export default function AppLayout({ children, hideMainPadding }: { children: Rea
                 className="p-2.5 px-4 rounded-2xl focus:shadow bg-muted hover:bg-muted/80 transition-colors flex items-center gap-2 text-muted-foreground hover:text-foreground border border-transparent hover:border-border"
               >
                 <SlidersHorizontal size={20} />
-                <span className="text-base font-medium">
+                <span className="text-sm font-medium">
                   Фильтры {activeFilterGroupsCount > 0 && `· ${activeFilterGroupsCount}`}
                 </span>
               </button>
