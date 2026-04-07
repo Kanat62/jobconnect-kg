@@ -4,10 +4,13 @@ import AppLayout from "@/components/AppLayout";
 import CandidateCard from "@/components/CandidateCard";
 import InviteModal from "@/components/InviteModal";
 import { useEmployer } from "@/context/EmployerContext";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Search, SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import Footer from "@/components/Footer";
 
 type SortOption = "date" | "salary_asc" | "salary_desc";
 
@@ -18,6 +21,10 @@ export default function CandidateSearch() {
 
   const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
   const [sortBy, setSortBy] = useState<SortOption>("date");
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const candidatesPerPage = 6;
 
   // Invite modal
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
@@ -47,7 +54,7 @@ export default function CandidateSearch() {
 
   // Active filter tags
   const activeFilters: { key: string; label: string; clear: () => void }[] = [];
-  
+
   const removeParam = (key: string, value?: string) => {
     const newParams = new URLSearchParams(searchParams);
     if (value) {
@@ -60,35 +67,35 @@ export default function CandidateSearch() {
     setSearchParams(newParams);
   };
 
-  filterCities.forEach(city => activeFilters.push({ 
-    key: `city-${city}`, label: city, clear: () => removeParam("city", city) 
+  filterCities.forEach(city => activeFilters.push({
+    key: `city-${city}`, label: city, clear: () => removeParam("city", city)
   }));
-  if (filterPosition) activeFilters.push({ 
-    key: "position", label: filterPosition, clear: () => removeParam("position") 
+  if (filterPosition) activeFilters.push({
+    key: "position", label: filterPosition, clear: () => removeParam("position")
   });
-  if (filterExperience) activeFilters.push({ 
-    key: "experience", label: filterExperience, clear: () => removeParam("experience") 
+  if (filterExperience) activeFilters.push({
+    key: "experience", label: filterExperience, clear: () => removeParam("experience")
   });
-  filterSchedule.forEach(s => activeFilters.push({ 
-    key: `schedule-${s}`, label: s, clear: () => removeParam("schedule", s) 
+  filterSchedule.forEach(s => activeFilters.push({
+    key: `schedule-${s}`, label: s, clear: () => removeParam("schedule", s)
   }));
-  if (filterEducation) activeFilters.push({ 
-    key: "education", label: filterEducation, clear: () => removeParam("education") 
+  if (filterEducation) activeFilters.push({
+    key: "education", label: filterEducation, clear: () => removeParam("education")
   });
-  if (filterGender && filterGender !== "any") activeFilters.push({ 
-    key: "gender", label: filterGender === "male" ? "Мужской" : "Женский", clear: () => removeParam("gender") 
+  if (filterGender && filterGender !== "any") activeFilters.push({
+    key: "gender", label: filterGender === "male" ? "Мужской" : "Женский", clear: () => removeParam("gender")
   });
-  if (filterSalaryFrom) activeFilters.push({ 
-    key: "salary_from", label: `от ${filterSalaryFrom} сом`, clear: () => removeParam("salary_from") 
+  if (filterSalaryFrom) activeFilters.push({
+    key: "salary_from", label: `от ${filterSalaryFrom} сом`, clear: () => removeParam("salary_from")
   });
-  if (filterSalaryTo) activeFilters.push({ 
-    key: "salary_to", label: `до ${filterSalaryTo} сом`, clear: () => removeParam("salary_to") 
+  if (filterSalaryTo) activeFilters.push({
+    key: "salary_to", label: `до ${filterSalaryTo} сом`, clear: () => removeParam("salary_to")
   });
-  if (filterAgeFrom) activeFilters.push({ 
-    key: "age_from", label: `от ${filterAgeFrom} лет`, clear: () => removeParam("age_from") 
+  if (filterAgeFrom) activeFilters.push({
+    key: "age_from", label: `от ${filterAgeFrom} лет`, clear: () => removeParam("age_from")
   });
-  if (filterAgeTo) activeFilters.push({ 
-    key: "age_to", label: `до ${filterAgeTo} лет`, clear: () => removeParam("age_to") 
+  if (filterAgeTo) activeFilters.push({
+    key: "age_to", label: `до ${filterAgeTo} лет`, clear: () => removeParam("age_to")
   });
 
   const clearAllFilters = () => {
@@ -123,7 +130,7 @@ export default function CandidateSearch() {
     if (filterSchedule.length > 0) result = result.filter(c => filterSchedule.includes(c.schedule));
     if (filterEducation) result = result.filter(c => c.education === filterEducation);
     if (filterGender && filterGender !== "any") result = result.filter(c => c.gender === filterGender);
-    
+
     if (filterSalaryFrom) {
       const from = parseInt(filterSalaryFrom, 10);
       result = result.filter(c => parseSalary(c.salary) >= from);
@@ -146,6 +153,21 @@ export default function CandidateSearch() {
     return result;
   }, [candidates, searchQuery, searchParams, sortBy]);
 
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchParams, sortBy]);
+
+  const totalPages = Math.ceil(filtered.length / candidatesPerPage);
+  const indexOfLastCandidate = currentPage * candidatesPerPage;
+  const indexOfFirstCandidate = indexOfLastCandidate - candidatesPerPage;
+  const currentCandidates = filtered.slice(indexOfFirstCandidate, indexOfLastCandidate);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const newParams = new URLSearchParams(searchParams);
@@ -156,94 +178,133 @@ export default function CandidateSearch() {
 
   return (
     <AppLayout>
-      <div className="px-4 lg:px-6 py-4 lg:py-6 space-y-4 max-w-3xl">
-        {/* Search header */}
-        <form onSubmit={handleSearchSubmit} className="flex items-center gap-3">
-          <div className="relative flex-1">
-            <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Поиск по должности, навыкам, ключевым словам"
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="pl-10 bg-muted border-0 rounded-xl h-11 focus-visible:ring-primary shadow-sm"
-            />
-          </div>
-          <button
-            type="button"
-            onClick={() => navigate("/employer/filters")}
-            className="p-2.5 px-4 rounded-xl bg-muted hover:bg-muted/80 transition-colors flex items-center gap-2 text-muted-foreground hover:text-foreground border border-transparent hover:border-border relative shadow-sm"
-          >
-            <SlidersHorizontal size={20} />
-            <span className="text-sm font-medium hidden sm:inline">Фильтры</span>
-            {activeFilters.length > 0 && (
-              <Badge className="ml-1 bg-primary text-primary-foreground text-[10px] h-5 min-w-[20px] flex items-center justify-center rounded-full p-0 px-1.5">
-                {activeFilters.length}
-              </Badge>
-            )}
-          </button>
-        </form>
-
-        {/* Active filter tags */}
-        {activeFilters.length > 0 && (
-          <div className="flex flex-wrap gap-2 items-center animate-fade-in">
-            {activeFilters.map(f => (
-              <span key={f.key} className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-xs font-medium border border-primary/20">
-                {f.label}
-                <button onClick={f.clear} className="hover:text-primary transition-colors">
-                  <X size={12} />
-                </button>
-              </span>
-            ))}
-            <button onClick={clearAllFilters} className="text-xs text-muted-foreground hover:text-primary transition-colors underline underline-offset-2">
-              Сбросить всё
-            </button>
-          </div>
-        )}
-
-        {/* Results bar */}
-        <div className="flex items-center justify-between pb-2 border-b border-border/50">
-          <p className="text-sm text-muted-foreground">
-            Найдено <span className="font-semibold text-foreground">{filtered.length}</span> резюме
-          </p>
-          <div className="flex items-center gap-2">
-            <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-              <SelectTrigger className="w-[180px] rounded-xl text-sm h-9 bg-card">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="date">По дате обновления</SelectItem>
-                <SelectItem value="salary_asc">По зарплате (возр.)</SelectItem>
-                <SelectItem value="salary_desc">По зарплате (убыв.)</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {/* Candidate list */}
-        {filtered.length === 0 ? (
-          <div className="text-center py-20 bg-muted/30 rounded-3xl border border-dashed border-border/50">
-            <Search size={48} className="mx-auto text-muted-foreground mb-4 opacity-30" />
-            <p className="font-semibold text-foreground text-lg">Нет кандидатов по вашему запросу</p>
-            <p className="text-sm text-muted-foreground mt-1">Попробуйте изменить поисковой запрос или фильтры</p>
-            {activeFilters.length > 0 && (
-              <Button onClick={clearAllFilters} variant="outline" className="mt-6 rounded-xl border-primary text-primary hover:bg-primary/5">
-                Сбросить фильтры
-              </Button>
-            )}
-          </div>
-        ) : (
-          <div className="grid gap-3">
-            {filtered.map((candidate, index) => (
-              <CandidateCard
-                key={candidate.id}
-                candidate={candidate}
-                onInvite={handleInvite}
-                listIndex={index}
-                totalCount={filtered.length}
+      <div className="flex flex-col min-h-full">
+        <div className="px-4 lg:px-6 py-4 lg:py-8 space-y-6 max-w-4xl mx-auto w-full flex-1">
+          {/* Search header */}
+          <form onSubmit={handleSearchSubmit} className="flex items-center gap-3">
+            <div className="relative flex-1">
+              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Поиск по должности, навыкам, ключевым словам"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                className="pl-10 bg-muted border-0 rounded-2xl h-11 focus-visible:ring-primary shadow-sm text-base"
               />
-            ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate("/employer/filters")}
+              className="p-2.5 px-4 rounded-2xl bg-muted hover:bg-muted/80 transition-colors flex items-center gap-2 text-muted-foreground hover:text-foreground border border-transparent hover:border-border relative shadow-sm"
+            >
+              <SlidersHorizontal size={20} />
+              <span className="text-base font-medium hidden sm:inline">Фильтры</span>
+              {activeFilters.length > 0 && (
+                <Badge className="ml-1 bg-primary text-primary-foreground text-[10px] h-5 min-w-[20px] flex items-center justify-center rounded-full p-0 px-1.5">
+                  {activeFilters.length}
+                </Badge>
+              )}
+            </button>
+          </form>
+
+          {/* Active filter tags */}
+          {activeFilters.length > 0 && (
+            <div className="flex flex-wrap gap-2 items-center animate-fade-in">
+              {activeFilters.map(f => (
+                <span key={f.key} className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-xl text-[13px] font-medium border border-primary/20">
+                  {f.label}
+                  <button onClick={f.clear} className="hover:text-primary transition-colors">
+                    <X size={12} />
+                  </button>
+                </span>
+              ))}
+              <button onClick={clearAllFilters} className="text-base text-muted-foreground hover:text-primary transition-colors underline underline-offset-2">
+                Сбросить всё
+              </button>
+            </div>
+          )}
+
+          {/* Results bar */}
+          <div className="flex items-center justify-between pb-2 border-b border-border/50">
+            <p className="text-base text-muted-foreground">
+              Найдено <span className="font-semibold text-foreground">{filtered.length}</span> резюме
+            </p>
+            <div className="flex items-center gap-2">
+              <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
+                <SelectTrigger className="w-[180px] rounded-2xl text-base h-10 bg-card">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="date">По дате обновления</SelectItem>
+                  <SelectItem value="salary_asc">По зарплате (возр.)</SelectItem>
+                  <SelectItem value="salary_desc">По зарплате (убыв.)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        )}
+
+          {/* Candidate list */}
+          {filtered.length === 0 ? (
+            <div className="text-center py-20 bg-muted/30 rounded-3xl border border-dashed border-border/50 max-w-2xl mx-auto w-full">
+              <Search size={48} className="mx-auto text-muted-foreground mb-4 opacity-30" />
+              <p className="font-semibold text-foreground text-xl">Нет кандидатов по вашему запросу</p>
+              <p className="text-base text-muted-foreground mt-1">Попробуйте изменить поисковой запрос или фильтры</p>
+              {activeFilters.length > 0 && (
+                <Button onClick={clearAllFilters} variant="outline" className="mt-6 rounded-2xl border-primary text-primary hover:bg-primary/5 text-base h-11 px-6">
+                  Сбросить фильтры
+                </Button>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="grid gap-3">
+                {currentCandidates.map((candidate, index) => (
+                  <CandidateCard
+                    key={candidate.id}
+                    candidate={candidate}
+                    onInvite={handleInvite}
+                    listIndex={index}
+                    totalCount={filtered.length}
+                  />
+                ))}
+              </div>
+
+              {/* Pagination UI */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 mt-8">
+                  <button
+                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className="p-2.5 rounded-2xl bg-muted hover:bg-muted/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors border border-border"
+                  >
+                    <ChevronLeft size={22} />
+                  </button>
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => handlePageChange(page)}
+                        className={`w-11 h-11 rounded-2xl text-lg font-medium transition-colors ${currentPage === page
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted hover:bg-muted/80 text-muted-foreground hover:text-foreground"
+                          }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                    className="p-2.5 rounded-2xl bg-muted hover:bg-muted/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors border border-border"
+                  >
+                    <ChevronRight size={22} />
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+        <Footer />
       </div>
 
       {/* Invite Modal */}

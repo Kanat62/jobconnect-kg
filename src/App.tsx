@@ -51,7 +51,7 @@ const App = () => (
                 <Route path="/favorites" element={<Favorites />} />
                 <Route path="/applications" element={<Applications />} />
                 <Route path="/chat" element={<Chat />} />
-                <Route path="/chat/:id" element={<ChatDialog />} />
+                <Route path="/chat/:id" element={<Chat />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/resume" element={<Resume />} />

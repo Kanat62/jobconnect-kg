@@ -38,26 +38,26 @@ export default function MyVacancies() {
 
   return (
     <AppLayout>
-      <div className="px-4 lg:px-6 py-4 lg:py-6 space-y-4">
+      <div className="px-4 lg:px-6 py-4 lg:py-8 space-y-6 max-w-4xl mx-auto w-full">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-bold text-foreground">Мои вакансии</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">Использовано {freeUsed} из 3 бесплатных</p>
+            <h1 className="text-2xl font-bold text-foreground">Мои вакансии</h1>
+            <p className="text-base text-muted-foreground mt-0.5">Использовано {freeUsed} из 3 бесплатных</p>
           </div>
-          <Button onClick={() => navigate("/employer/create-vacancy")} className="rounded-xl gap-2">
-            <Plus size={18} /> Создать вакансию
+          <Button onClick={() => navigate("/employer/create-vacancy")} className="rounded-2xl gap-2 h-11 text-base px-6">
+            <Plus size={20} /> Создать вакансию
           </Button>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
           {tabs.map((tab) => (
             <button
               key={tab.key}
               onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+              className={`px-5 py-2.5 rounded-2xl text-base font-medium transition-all whitespace-nowrap border ${
                 activeTab === tab.key
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:text-foreground"
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                  : "bg-muted/50 text-muted-foreground border-transparent hover:border-border"
               }`}
             >
               {tab.label}
@@ -66,13 +66,13 @@ export default function MyVacancies() {
         </div>
 
         {filtered.length === 0 ? (
-          <div className="text-center py-16">
+          <div className="text-center py-20 bg-muted/30 rounded-3xl border border-dashed border-border/50 max-w-2xl mx-auto w-full">
             <Briefcase size={48} className="mx-auto text-muted-foreground mb-4 opacity-40" />
-            <p className="font-semibold text-foreground">
+            <p className="font-semibold text-foreground text-xl">
               {activeTab === "active" ? "Создайте первую вакансию" : activeTab === "moderation" ? "Нет вакансий на модерации" : "Архив пуст"}
             </p>
             {activeTab === "active" && (
-              <Button onClick={() => navigate("/employer/create-vacancy")} className="mt-4 rounded-xl">
+              <Button onClick={() => navigate("/employer/create-vacancy")} className="mt-6 rounded-2xl h-11 text-base px-6">
                 Создать вакансию
               </Button>
             )}
@@ -121,33 +121,33 @@ function VacancyCard({ vacancy }: { vacancy: EmployerVacancy }) {
         <div className="flex items-start justify-between">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="font-semibold text-foreground">{vacancy.title}</h3>
-              <Badge variant="outline" className={`text-xs rounded-lg border ${sc.className}`}>{sc.label}</Badge>
+              <h3 className="font-bold text-foreground text-lg">{vacancy.title}</h3>
+              <Badge variant="outline" className={`text-xs rounded-xl border ${sc.className}`}>{sc.label}</Badge>
             </div>
-            <p className="text-sm text-green-600 font-medium mt-1">{vacancy.salary}</p>
-            <p className="text-xs text-muted-foreground mt-0.5">{vacancy.city} · {vacancy.date}</p>
+            <p className="text-base text-green-600 font-bold mt-1">{vacancy.salary}</p>
+            <p className="text-sm text-muted-foreground mt-0.5">{vacancy.city} · {vacancy.date}</p>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="p-1.5 rounded-lg hover:bg-muted"><MoreVertical size={18} className="text-muted-foreground" /></button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="rounded-xl" style={{ zIndex: 300 }}>
+            <DropdownMenuContent align="end" className="rounded-2xl p-1.5 shadow-xl border-border/50" style={{ zIndex: 300 }}>
               <DropdownMenuItem
-                className="gap-2"
+                className="gap-2.5 rounded-xl py-2.5 text-base"
                 disabled={isOnModeration}
                 onClick={() => navigate(`/employer/edit-vacancy/${vacancy.id}`)}
               >
-                <Pencil size={16} /> Редактировать
+                <Pencil size={18} /> Редактировать
                 {isOnModeration && <span className="text-xs text-muted-foreground ml-auto">Дождитесь проверки</span>}
               </DropdownMenuItem>
-              <DropdownMenuItem className="gap-2" onClick={() => navigate("/employer/pricing")}>
-                <ArrowUp size={16} /> Поднять в топ
+              <DropdownMenuItem className="gap-2.5 rounded-xl py-2.5 text-base" onClick={() => navigate("/employer/pricing")}>
+                <ArrowUp size={18} /> Поднять в топ
               </DropdownMenuItem>
-              <DropdownMenuItem className="gap-2" onClick={() => setCloseConfirm(true)}>
-                <XCircle size={16} /> Закрыть вакансию
+              <DropdownMenuItem className="gap-2.5 rounded-xl py-2.5 text-base" onClick={() => setCloseConfirm(true)}>
+                <XCircle size={18} /> Закрыть вакансию
               </DropdownMenuItem>
-              <DropdownMenuItem className="gap-2 text-destructive" onClick={() => setDeleteStep(1)}>
-                <Trash2 size={16} /> Удалить
+              <DropdownMenuItem className="gap-2.5 rounded-xl py-2.5 text-base text-destructive" onClick={() => setDeleteStep(1)}>
+                <Trash2 size={18} /> Удалить
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -161,16 +161,16 @@ function VacancyCard({ vacancy }: { vacancy: EmployerVacancy }) {
 
         {vacancy.status === "active" && (
           <>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1"><Eye size={14} /> {vacancy.views}</span>
-              <span className="flex items-center gap-1"><Heart size={14} /> {vacancy.favorites}</span>
-              <span className="flex items-center gap-1"><Users size={14} /> {vacancy.applications}</span>
+            <div className="flex items-center gap-4 text-base text-muted-foreground">
+              <span className="flex items-center gap-1.5"><Eye size={16} /> {vacancy.views}</span>
+              <span className="flex items-center gap-1.5"><Heart size={16} /> {vacancy.favorites}</span>
+              <span className="flex items-center gap-1.5"><Users size={16} /> {vacancy.applications}</span>
             </div>
-            <div className="flex gap-2">
-              <Button onClick={() => navigate(`/employer/applicants/${vacancy.id}`)} className="rounded-xl flex-1" size="sm">
+            <div className="flex flex-col sm:flex-row gap-2">
+              <Button onClick={() => navigate(`/employer/applicants/${vacancy.id}`)} className="rounded-2xl flex-1 h-11 text-base shadow-sm" size="sm">
                 Посмотреть кандидатов
               </Button>
-              <Button variant="outline" className="rounded-xl flex-1" size="sm" onClick={() => navigate("/employer/candidates")}>
+              <Button variant="outline" className="rounded-2xl flex-1 h-11 text-base" size="sm" onClick={() => navigate("/employer/candidates")}>
                 {vacancy.applications} подходящих резюме
               </Button>
             </div>
@@ -178,13 +178,13 @@ function VacancyCard({ vacancy }: { vacancy: EmployerVacancy }) {
         )}
 
         {vacancy.status === "rejected" && (
-          <Button variant="outline" className="rounded-xl w-full" size="sm" onClick={() => navigate(`/employer/edit-vacancy/${vacancy.id}`)}>
+          <Button variant="outline" className="rounded-2xl w-full h-11 text-base border-primary text-primary" size="sm" onClick={() => navigate(`/employer/edit-vacancy/${vacancy.id}`)}>
             Исправить и отправить повторно
           </Button>
         )}
 
         {vacancy.status === "archived" && (
-          <Button variant="outline" className="rounded-xl w-full" size="sm" onClick={() => updateVacancyStatus(vacancy.id, "active")}>
+          <Button variant="outline" className="rounded-2xl w-full h-11 text-base" size="sm" onClick={() => updateVacancyStatus(vacancy.id, "active")}>
             Восстановить
           </Button>
         )}

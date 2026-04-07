@@ -29,14 +29,14 @@ export default function CandidateCard({ candidate, onInvite }: CandidateCardProp
   };
 
   return (
-    <div 
+    <div
       onClick={handleCardClick}
       className="bg-card border border-border rounded-2xl p-4 space-y-3 animate-fade-in cursor-pointer hover:border-primary/30 transition-colors shadow-sm"
     >
       <div className="flex items-start gap-3">
         {/* Avatar */}
         <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
-             style={{ backgroundColor: "#F0F0FD" }}>
+          style={{ backgroundColor: "#F0F0FD" }}>
           {candidate.avatar ? (
             <img src={candidate.avatar} alt={fullName} className="w-12 h-12 rounded-full object-cover" />
           ) : (
@@ -69,11 +69,11 @@ export default function CandidateCard({ candidate, onInvite }: CandidateCardProp
         </div>
 
         {/* Favorite */}
-        <button 
+        <button
           onClick={(e) => {
             e.stopPropagation();
             toggleSaved(candidate.id);
-          }} 
+          }}
           className="p-1.5 rounded-lg hover:bg-muted transition-colors flex-shrink-0"
         >
           <Heart size={20} className={isSaved ? "fill-red-500 text-red-500" : "text-muted-foreground"} />

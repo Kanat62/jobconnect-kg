@@ -18,15 +18,15 @@ export default function EmployerProfile() {
       <div className="px-4 lg:px-6 py-4 lg:py-6 max-w-2xl mx-auto">
         {/* Company info */}
         <div className="flex items-center gap-4 mb-4 p-4 bg-card border border-border rounded-2xl">
-          <div className="w-14 h-14 rounded-xl bg-primary-light flex items-center justify-center">
-            <Building2 size={24} className="text-primary" />
+          <div className="w-14 h-14 rounded-2xl bg-primary-light flex items-center justify-center">
+            <Building2 size={26} className="text-primary" />
           </div>
           <div className="flex-1">
-            <p className="font-semibold text-foreground">ООО «Пример»</p>
-            <p className="text-sm text-muted-foreground">Бишкек · Торговля</p>
+            <p className="font-bold text-lg text-foreground">ООО «Пример»</p>
+            <p className="text-base text-muted-foreground">Бишкек · Торговля</p>
           </div>
           <Link to="/employer/company-profile">
-            <Button variant="outline" size="sm" className="rounded-xl">Редактировать</Button>
+            <Button variant="outline" size="sm" className="rounded-2xl h-10 text-base border-primary text-primary">Редактировать</Button>
           </Link>
         </div>
 
@@ -53,32 +53,32 @@ export default function EmployerProfile() {
             { icon: CreditCard, label: "Тарифы и оплата", path: "/employer/pricing" },
             { icon: Receipt, label: "История платежей", path: "#" },
           ].map(item => (
-            <Link key={item.label} to={item.path} className="flex items-center gap-3 p-3 rounded-xl hover:bg-muted transition-colors">
-              <item.icon size={20} className="text-muted-foreground" />
-              <span className="flex-1 text-sm font-medium text-foreground">{item.label}</span>
-              <ChevronRight size={16} className="text-muted-foreground" />
+            <Link key={item.label} to={item.path} className="flex items-center gap-3 p-3 rounded-2xl hover:bg-muted transition-colors">
+              <item.icon size={22} className="text-muted-foreground" />
+              <span className="flex-1 text-base font-medium text-foreground">{item.label}</span>
+              <ChevronRight size={18} className="text-muted-foreground" />
             </Link>
           ))}
         </div>
 
         {/* Settings */}
         <div className="border-t border-border pt-4 space-y-1">
-          <h3 className="text-sm font-semibold text-muted-foreground px-3 mb-2">Настройки</h3>
-          <div className="flex items-center gap-3 p-3 rounded-xl">
-            <Bell size={20} className="text-muted-foreground" />
-            <span className="flex-1 text-sm font-medium">Уведомления</span>
+          <h3 className="text-sm font-semibold text-muted-foreground px-3 mb-2 uppercase tracking-wider">Настройки</h3>
+          <div className="flex items-center gap-3 p-3 rounded-2xl">
+            <Bell size={22} className="text-muted-foreground" />
+            <span className="flex-1 text-base font-medium">Уведомления</span>
             <Switch defaultChecked />
           </div>
-          <a href="#" className="flex items-center gap-3 p-3 rounded-xl hover:bg-muted transition-colors">
-            <FileQuestion size={20} className="text-muted-foreground" />
-            <span className="flex-1 text-sm font-medium">Связаться с поддержкой</span>
-            <ChevronRight size={16} className="text-muted-foreground" />
+          <a href="#" className="flex items-center gap-3 p-3 rounded-2xl hover:bg-muted transition-colors">
+            <FileQuestion size={22} className="text-muted-foreground" />
+            <span className="flex-1 text-base font-medium">Связаться с поддержкой</span>
+            <ChevronRight size={18} className="text-muted-foreground" />
           </a>
         </div>
 
         <div className="border-t border-border pt-4 mt-4">
-          <Button variant="outline" className="w-full justify-start rounded-xl text-destructive hover:text-destructive">
-            <LogOut size={18} className="mr-2" /> Выйти из аккаунта
+          <Button variant="outline" className="w-full justify-start rounded-2xl text-destructive hover:text-destructive h-12 text-base shadow-sm">
+            <LogOut size={22} className="mr-3" /> Выйти из аккаунта
           </Button>
         </div>
       </div>

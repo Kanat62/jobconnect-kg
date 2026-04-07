@@ -24,7 +24,7 @@ export default function Favorites() {
             <Heart size={48} className="mx-auto text-muted-foreground mb-4" />
             <p className="font-semibold text-foreground">Сохраняйте вакансии</p>
             <p className="text-sm text-muted-foreground mt-1">чтобы вернуться к ним позже</p>
-            <Button asChild className="mt-6 rounded-xl">
+            <Button asChild className="mt-8 rounded-2xl h-11 text-base px-6">
               <Link to="/">Найти вакансии</Link>
             </Button>
           </div>

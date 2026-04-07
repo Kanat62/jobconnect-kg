@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft } from "lucide-react";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import iconLogo from '@/assets/logo/Logo.svg';
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -54,16 +55,21 @@ export default function Auth() {
         <div className="w-full max-w-sm animate-fade-in" key={step}>
           {/* Logo */}
           <div className="flex items-center justify-center gap-2 mb-10">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">Ж</span>
+            <div className={'text-[38px] flex items-center font-bold'}>
+              Ж
+              <img
+                src={iconLogo}
+                alt="logo"
+                className="w-[26px] mt-[5px]"
+              />
+              муш.kg
             </div>
-            <span className="text-xl font-bold text-foreground">Жомуш.kg</span>
           </div>
 
           {step === "phone" ? (
             <>
               <h1 className="text-xl font-bold text-foreground text-center mb-2">Введите номер телефона</h1>
-              <p className="text-sm text-muted-foreground text-center mb-6">Отправим SMS с кодом подтверждения</p>
+              <p className="text-sm font-medium text-muted-foreground text-center mb-6">Отправим SMS с кодом подтверждения</p>
 
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-foreground">+996</span>
@@ -72,13 +78,13 @@ export default function Auth() {
                   placeholder="700 123 456"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="pl-14 rounded-xl h-12 text-base bg-muted border-0"
+                  className="pl-14 rounded-xl h-12 text-base bg-muted border-0 outline-none"
                   maxLength={12}
                 />
               </div>
 
               <Button
-                className="w-full mt-4 rounded-xl h-12 text-base"
+                className="w-full mt-4 rounded-2xl h-12 text-base"
                 disabled={!isPhoneValid}
                 onClick={handleSendCode}
               >
@@ -93,17 +99,17 @@ export default function Auth() {
           ) : (
             <>
               <h1 className="text-xl font-bold text-foreground text-center mb-2">Введите код</h1>
-              <p className="text-sm text-muted-foreground text-center mb-6">
+              <p className="text-sm font-medium text-muted-foreground text-center mb-6">
                 Код отправлен на +996 {phone}
               </p>
 
               <div className="flex justify-center mb-4">
                 <InputOTP maxLength={4} value={otp} onChange={setOtp}>
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} className="w-14 h-14 text-lg rounded-xl" />
-                    <InputOTPSlot index={1} className="w-14 h-14 text-lg rounded-xl" />
-                    <InputOTPSlot index={2} className="w-14 h-14 text-lg rounded-xl" />
-                    <InputOTPSlot index={3} className="w-14 h-14 text-lg rounded-xl" />
+                  <InputOTPGroup className="flex gap-1">
+                    <InputOTPSlot index={0} className="w-14 h-14 text-lg rounded-2xl" />
+                    <InputOTPSlot index={1} className="w-14 h-14 text-lg rounded-2xl" />
+                    <InputOTPSlot index={2} className="w-14 h-14 text-lg rounded-2xl" />
+                    <InputOTPSlot index={3} className="w-14 h-14 text-lg rounded-2xl" />
                   </InputOTPGroup>
                 </InputOTP>
               </div>
@@ -111,7 +117,7 @@ export default function Auth() {
               {error && <p className="text-sm text-destructive text-center mb-3">{error}</p>}
 
               <Button
-                className="w-full rounded-xl h-12 text-base"
+                className="w-full rounded-2xl h-12 text-base"
                 disabled={otp.length < 4}
                 onClick={handleVerify}
               >

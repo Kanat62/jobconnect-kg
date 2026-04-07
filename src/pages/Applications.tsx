@@ -3,7 +3,8 @@ import { mockApplications } from "@/lib/mock-data";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, ExternalLink, FileText } from "lucide-react";
+import { MessageCircle, ExternalLink, FileText, MapPin } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const statusConfig = {
   sent: { label: "Отправлен", class: "bg-muted text-muted-foreground" },
@@ -28,7 +29,7 @@ export default function Applications() {
 
   return (
     <AppLayout>
-      <div className="px-4 lg:px-6 py-4 lg:py-6">
+      <div className="px-4 lg:px-6 py-4 lg:py-6 max-w-3xl mx-auto ">
         <h1 className="text-xl font-bold text-foreground mb-4">Мои отклики</h1>
 
         {/* Tabs */}
@@ -37,11 +38,10 @@ export default function Applications() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all ${
-                activeTab === tab.id
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-accent"
-              }`}
+              className={`px-5 py-2 h-10 rounded-2xl text-sm font-medium whitespace-nowrap transition-all border ${activeTab === tab.id
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                  : "bg-muted text-muted-foreground border-transparent hover:border-border"
+                }`}
             >
               {tab.label}
             </button>
@@ -53,25 +53,28 @@ export default function Applications() {
             {filtered.map((app) => {
               const status = statusConfig[app.status];
               return (
-                <div key={app.id} className="bg-card border border-border rounded-2xl p-4 animate-fade-in">
+                <div key={app.id} className="bg-card border border-border shadow rounded-2xl p-4 animate-fade-in">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-foreground">{app.jobTitle}</h3>
-                      <p className="text-sm text-muted-foreground mt-0.5">{app.company} · {app.city}</p>
-                      <p className="text-xs text-muted-foreground mt-1">Откликнулся {app.date}</p>
+                      <h3 className="text-lg font-semibold text-foreground">{app.jobTitle}</h3>
+                      <p className="text-base  text-muted-foreground mt-0.5">{app.company} <span className="inline-flex items-center gap-1 text-xs text-primary bg-primary-light px-2 py-0.5 rounded-full ">
+                        <MapPin size={12} />
+                        {app.city}
+                      </span></p>
+                      <p className="text-sm text-muted-foreground mt-1">Откликнулся {app.date}</p>
                     </div>
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${status.class}`}>
+                    <Badge variant="outline" className={`text-xs font-medium px-2.5 py-1 rounded-xl border ${status.class}`}>
                       {status.label}
-                    </span>
+                    </Badge>
                   </div>
                   <div className="flex gap-2 mt-3">
                     {app.status === "invited" && (
-                      <Button size="sm" className="rounded-xl text-xs" asChild>
-                        <Link to="/chat"><MessageCircle size={14} className="mr-1" /> Открыть чат</Link>
+                      <Button size="sm" className="rounded-2xl text-sm h-10 px-4" asChild>
+                        <Link to="/chat"><MessageCircle size={16} className="mr-1.5" /> Открыть чат</Link>
                       </Button>
                     )}
-                    <Button size="sm" variant="outline" className="rounded-xl text-xs" asChild>
-                      <Link to={`/job/${app.jobId}`}><ExternalLink size={14} className="mr-1" /> Вакансия</Link>
+                    <Button size="sm" variant="outline" className="rounded-2xl text-sm h-10 px-4 border-primary text-primary" asChild>
+                      <Link to={`/job/${app.jobId}`}><ExternalLink size={16} className="mr-1.5" /> Вакансия</Link>
                     </Button>
                   </div>
                 </div>

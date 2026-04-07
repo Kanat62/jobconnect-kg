@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
+import iconLogo from '@/assets/logo/Logo.svg'
 const seekerNavItems = [
   { path: "/", label: "Вакансии", icon: LayoutGrid },
   { path: "/favorites", label: "Избранное", icon: Heart },
@@ -52,31 +52,35 @@ export default function AppLayout({ children, hideMainPadding }: { children: Rea
       {/* Sidebar - desktop */}
       <aside className="hidden lg:flex flex-col w-[260px] border-r border-sidebar-border bg-sidebar fixed h-full z-30">
         <div className="p-6 pb-4">
-          <Link to={role === "employer" ? "/employer/candidates" : "/"} className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">Ж</span>
+          <Link to={role === "employer" ? "/employer/candidates" : "/"} className="w-full flex justify-center items-center gap-2">
+            <div className={'text-[30px] flex items-center font-bold'}>
+              Ж
+              <img
+                src={iconLogo}
+                alt="logo"
+                className="w-[22px] mt-[1px]"
+              />
+              муш.kg
             </div>
-            <span className="text-xl font-bold text-foreground">Жомуш.kg</span>
           </Link>
         </div>
 
-        <nav className="flex-1 px-3 space-y-1 pt-10">
+        <nav className="flex-1 px-3 space-y-1 pt-2">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-colors ${
-                  isActive
-                    ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                    : "text-sidebar-foreground hover:bg-muted"
-                }`}
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors ${isActive
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  : "text-sidebar-foreground hover:bg-muted"
+                  }`}
               >
-                <item.icon size={20} />
+                <item.icon size={22} />
                 <span>{item.label}</span>
                 {item.badge && item.badge > 0 && (
-                  <Badge className="ml-auto bg-primary text-primary-foreground text-xs h-5 min-w-[20px] flex items-center justify-center rounded-full">
+                  <Badge className="ml-auto bg-primary text-primary-foreground text-xs h-[21px] w-[21px] flex items-center justify-center rounded-full">
                     {item.badge}
                   </Badge>
                 )}
@@ -88,27 +92,28 @@ export default function AppLayout({ children, hideMainPadding }: { children: Rea
         <div className="p-4 border-t border-sidebar-border">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 text-base text-muted-foreground hover:text-foreground transition-colors w-full px-4 py-2 rounded-xl hover:bg-muted">
+              <button className="flex items-center justify-center outline-none border-[2px] gap-2 text-base font-medium text-muted-foreground hover:text-foreground transition-colors w-full px-4 py-[10px] rounded-2xl hover:bg-muted">
                 <span>{role === "employer" ? "Ищу сотрудника" : "Ищу работу"}</span>
                 <ChevronDown size={16} />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[220px] rounded-xl">
+            <DropdownMenuContent align="start" className="w-[220px] rounded-2xl p-2 flex flex-col gap-1">
               <DropdownMenuItem
                 onClick={() => handleRoleSwitch("seeker")}
-                className={`rounded-lg ${role === "seeker" ? "bg-primary-light text-primary font-medium" : ""}`}
+                className={`rounded-2xl ${role === "seeker" ? "py-2 text-base bg-primary-light text-primary font-medium" : "py-2"}`}
               >
                 Ищу работу
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => handleRoleSwitch("employer")}
-                className={`rounded-lg ${role === "employer" ? "bg-primary-light text-primary font-medium" : ""}`}
+                className={`rounded-2xl ${role === "employer" ? "py-2 text-base bg-primary-light text-primary font-medium" : "py-2"}`}
               >
                 Ищу сотрудника
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
+
       </aside>
 
       {/* Main content */}
@@ -118,17 +123,17 @@ export default function AppLayout({ children, hideMainPadding }: { children: Rea
           <header className="hidden lg:flex items-center gap-4 px-6 py-4 border-b border-border bg-background sticky top-0 z-20 h-[73px]">
             <div className="flex-1 max-w-xl flex items-center gap-2">
               <div className="relative flex-1">
-                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Search size={21} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   placeholder="Поиск вакансий..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-muted border-0 rounded-xl h-11"
+                  className="text-base font-medium focus:shadow pl-10 bg-muted border-0 rounded-xl h-11 outline-none "
                 />
               </div>
-              <button 
+              <button
                 onClick={() => navigate("/filters")}
-                className="p-2.5 px-4 rounded-xl bg-muted hover:bg-muted/80 transition-colors flex items-center gap-2 text-muted-foreground hover:text-foreground border border-transparent hover:border-border"
+                className="p-2.5 px-4 rounded-2xl focus:shadow bg-muted hover:bg-muted/80 transition-colors flex items-center gap-2 text-muted-foreground hover:text-foreground border border-transparent hover:border-border"
               >
                 <SlidersHorizontal size={20} />
                 <span className="text-base font-medium">
@@ -155,7 +160,7 @@ export default function AppLayout({ children, hideMainPadding }: { children: Rea
                   className="pl-9 bg-muted border-0 rounded-xl h-9 text-base"
                 />
               </div>
-              <button 
+              <button
                 onClick={() => navigate("/filters")}
                 className="p-1.5 rounded-lg bg-muted flex items-center justify-center text-muted-foreground relative"
               >
@@ -171,7 +176,7 @@ export default function AppLayout({ children, hideMainPadding }: { children: Rea
         )}
 
         {/* Page content */}
-        <main className={`flex-1 min-w-0 ${hideMainPadding ? "" : "pb-20 lg:pb-8"}`}>
+        <main className={`flex-1 min-w-0 ${hideMainPadding ? "" : ""}`}>
           {children}
         </main>
       </div>
@@ -185,9 +190,8 @@ export default function AppLayout({ children, hideMainPadding }: { children: Rea
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors relative ${
-                  isActive ? "text-primary" : "text-muted-foreground"
-                }`}
+                className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-colors relative ${isActive ? "text-primary" : "text-muted-foreground"
+                  }`}
               >
                 <item.icon size={22} />
                 <span className="text-[10px] font-medium">{item.label}</span>

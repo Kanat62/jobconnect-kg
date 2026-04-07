@@ -4,6 +4,7 @@ import { ArrowLeft, Heart, Share2, MapPin, Briefcase, Clock, Globe, DollarSign, 
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import AppLayout from "@/components/AppLayout";
+import CompanyIcon from "@/components/CompanyIcon";
 
 export default function JobDetail() {
   const { id } = useParams();
@@ -48,39 +49,35 @@ export default function JobDetail() {
 
         <div className="max-w-3xl mx-auto px-4 lg:px-6 py-6 pb-28 space-y-6 animate-fade-in">
           {/* ... existing content ... */}
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-2xl font-bold text-foreground break-words">{job.title}</h1>
-              <div className="flex items-center gap-2 mt-2">
-                <span className="text-muted-foreground">{job.company}</span>
-                <span className="bg-primary-light text-primary text-sm px-2 py-0.5 rounded-full flex items-center gap-1 font-medium">
-                  <MapPin size={10} /> {job.city}
-                </span>
-                <span className="text-sm text-muted-foreground">Опубликовано: {job.date}</span>
+          <div className="space-y-4">
+            <div className="flex items-start justify-between gap-4">
+              <h1 className="text-2xl font-bold text-foreground break-words flex-1 min-w-0">{job.title}</h1>
+              <div className="flex items-center gap-2 flex-shrink-0">
+                <button
+                  onClick={() => setIsFav(!isFav)}
+                  className="p-2 rounded-xl bg-muted hover:bg-muted/80 transition-colors"
+                  title={isFav ? "Удалить из избранного" : "Добавить в избранное"}
+                >
+                  <Heart size={22} className={isFav ? "fill-red-500 text-red-500" : "text-muted-foreground"} />
+                </button>
+                <button
+                  className="p-2 rounded-xl bg-muted hover:bg-muted/80 transition-colors"
+                  title="Поделиться"
+                >
+                  <Share2 size={22} className="text-muted-foreground" />
+                </button>
               </div>
             </div>
-            <div className="flex items-center gap-2 flex-shrink-0 pt-1">
-              <button 
-                onClick={() => setIsFav(!isFav)} 
-                className="p-2 rounded-xl bg-muted hover:bg-muted/80 transition-colors"
-                title={isFav ? "Удалить из избранного" : "Добавить в избранное"}
-              >
-                <Heart size={22} className={isFav ? "fill-red-500 text-red-500" : "text-muted-foreground"} />
-              </button>
-              <button 
-                className="p-2 rounded-xl bg-muted hover:bg-muted/80 transition-colors"
-                title="Поделиться"
-              >
-                <Share2 size={22} className="text-muted-foreground" />
-              </button>
+
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <CompanyIcon company={job.company} />
+                <span className="text-lg font-medium text-muted-foreground">{job.company}</span>
+              </div>
+              <span className="text-sm font-medium text-muted-foreground">Опубликовано: {job.date}</span>
             </div>
           </div>
-          {job.salary && (
-            <p className="mt-3 text-xl font-bold text-foreground">
-              {job.salary}
-              {job.salaryPeriod && <span className="text-base font-normal text-muted-foreground ml-1">{job.salaryPeriod}</span>}
-            </p>
-          )}
+
 
           {/* Meta */}
           <div className="bg-muted rounded-2xl p-4 space-y-3">
@@ -96,11 +93,11 @@ export default function JobDetail() {
           {/* Responsibilities */}
           {job.responsibilities && job.responsibilities.length > 0 && (
             <section>
-              <h3 className="font-semibold text-foreground mb-2">Обязанности</h3>
+              <h3 className="text-lg font-semibold text-foreground mb-2">Обязанности</h3>
               <ul className="space-y-1.5">
                 {job.responsibilities.map((r, i) => (
-                  <li key={i} className="text-base text-muted-foreground flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                  <li key={i} className="text-base text-black font-medium flex items-start gap-2">
+                    <span className="w-[5px] h-[5px] rounded-full bg-black mt-2 flex-shrink-0" />
                     {r}
                   </li>
                 ))}
@@ -111,11 +108,11 @@ export default function JobDetail() {
           {/* Requirements */}
           {job.requirements && job.requirements.length > 0 && (
             <section>
-              <h3 className="font-semibold text-foreground mb-2">Требования</h3>
+              <h3 className="font-semibold text-black text-lg mb-2">Требования</h3>
               <ul className="space-y-1.5">
                 {job.requirements.map((r, i) => (
-                  <li key={i} className="text-base text-muted-foreground flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                  <li key={i} className="text-base text-black font-medium flex items-start gap-2">
+                    <span className="w-[5px] h-[5px] rounded-full bg-black mt-2 flex-shrink-0" />
                     {r}
                   </li>
                 ))}
@@ -126,11 +123,11 @@ export default function JobDetail() {
           {/* Conditions */}
           {job.conditions && job.conditions.length > 0 && (
             <section>
-              <h3 className="font-semibold text-foreground mb-2">Условия</h3>
+              <h3 className="font-semibold text-black text-lg  mb-2">Условия</h3>
               <ul className="space-y-1.5">
                 {job.conditions.map((c, i) => (
-                  <li key={i} className="text-base text-muted-foreground flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-success mt-1.5 flex-shrink-0" />
+                  <li key={i} className="text-base text-black font-medium flex items-start gap-2">
+                    <span className="w-[5px] h-[5px] rounded-full bg-black mt-2 flex-shrink-0" />
                     {c}
                   </li>
                 ))}
@@ -144,19 +141,19 @@ export default function JobDetail() {
           <div className="max-w-3xl mx-auto flex gap-3">
             {applied ? (
               <>
-                <Button disabled className="flex-1 rounded-xl h-12 bg-muted text-muted-foreground">
+                <Button disabled className="flex-1 rounded-2xl h-12 bg-muted text-muted-foreground">
                   Вы откликнулись ✓
                 </Button>
-                <Button variant="outline" className="flex-1 rounded-xl h-12" onClick={() => navigate("/chat")}>
+                <Button variant="outline" className="text-lg flex-1 rounded-2xl h-12" onClick={() => navigate("/chat")}>
                   Написать
                 </Button>
               </>
             ) : (
               <>
-                <Button className="flex-1 rounded-xl h-12" onClick={() => setApplied(true)}>
+                <Button className="flex-1 rounded-2xl h-12" onClick={() => setApplied(true)}>
                   Откликнуться
                 </Button>
-                <Button variant="outline" className="flex-1 rounded-xl h-12" onClick={() => navigate("/chat")}>
+                <Button variant="outline" className="flex-1 rounded-2xl h-12" onClick={() => navigate("/chat")}>
                   Написать
                 </Button>
               </>

@@ -24,21 +24,21 @@ const periods = ["За месяц", "За смену", "За день", "За ч
 
 export default function Filters() {
   const navigate = useNavigate();
-  const { 
-    draftFilters, 
-    setDraftCities, 
-    setDraftProfession, 
-    setDraftSalaryFrom, 
-    setDraftSalaryTo, 
-    setDraftSchedule, 
-    setDraftRemote, 
-    setDraftExperience, 
-    setDraftPaymentPeriod, 
+  const {
+    draftFilters,
+    setDraftCities,
+    setDraftProfession,
+    setDraftSalaryFrom,
+    setDraftSalaryTo,
+    setDraftSchedule,
+    setDraftRemote,
+    setDraftExperience,
+    setDraftPaymentPeriod,
     applyFilters,
     resetAll,
     cancelDraft
   } = useFilters();
-  
+
   const [cityInput, setCityInput] = useState("");
   const [cityFocus, setCityFocus] = useState(false);
   const [profInput, setProfInput] = useState(draftFilters.profession);
@@ -103,8 +103,8 @@ export default function Filters() {
   };
 
   const FilterSection = ({ title, children, className = "" }: { title: string, children: React.ReactNode, className?: string }) => (
-    <div className={`mb-6 pb-6 border-b border-[#EBEBEB] ${className}`}>
-      <h3 className="text-[13px] font-medium text-[#111] mb-3">{title}</h3>
+    <div className={`mb-2 pb-6${className}`}>
+      <h3 className="text-base font-medium text-[#111] mb-3">{title}</h3>
       {children}
     </div>
   );
@@ -112,11 +112,10 @@ export default function Filters() {
   const Chip = ({ label, active, onClick }: { label: string, active: boolean, onClick: () => void }) => (
     <button
       onClick={onClick}
-      className={`px-4 py-2 rounded-full border text-base transition-all ${
-        active
-          ? "border-primary bg-primary/5 text-primary font-medium"
-          : "border-[#EBEBEB] bg-background text-foreground hover:border-muted-foreground/30"
-      }`}
+      className={`px-4 py-2 rounded-full border text-base transition-all ${active
+        ? "border-primary bg-primary/5 text-primary font-medium"
+        : "border-[#EBEBEB] bg-background text-foreground hover:border-muted-foreground/30"
+        }`}
     >
       {label}
     </button>
@@ -127,7 +126,7 @@ export default function Filters() {
       <div className="min-h-screen bg-background flex flex-col pt-safe">
         {/* Header */}
         <header className="sticky top-0 z-40 bg-background border-b border-border flex items-center px-4 py-4">
-          <button onClick={handleBack} className="p-1 rounded-full hover:bg-muted">
+          <button onClick={handleBack} className="p-2 rounded-full hover:bg-muted">
             <ArrowLeft size={24} />
           </button>
           <h1 className="text-xl font-bold flex-1 text-center mr-8">Фильтры</h1>
@@ -153,17 +152,17 @@ export default function Filters() {
                 <div className="absolute top-full left-0 right-0 mt-1 bg-background border border-border rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto overflow-x-hidden">
                   {popularCities.filter(c => c.toLowerCase().includes(cityInput.toLowerCase())).length > 0 ? (
                     popularCities
-                    .filter(c => c.toLowerCase().includes(cityInput.toLowerCase()))
-                    .map(city => (
-                      <button
-                        key={city}
-                        onClick={() => handleCitySelect(city)}
-                        className="w-full px-4 py-3 text-left hover:bg-muted flex items-center justify-between transition-colors border-b border-border last:border-0"
-                      >
-                        <span className="text-base">{city}</span>
-                        {draftFilters.cities.includes(city) && <Check size={16} className="text-primary" />}
-                      </button>
-                    ))
+                      .filter(c => c.toLowerCase().includes(cityInput.toLowerCase()))
+                      .map(city => (
+                        <button
+                          key={city}
+                          onClick={() => handleCitySelect(city)}
+                          className="w-full px-4 py-3 text-left hover:bg-muted flex items-center justify-between transition-colors border-b border-border last:border-0"
+                        >
+                          <span className="text-base">{city}</span>
+                          {draftFilters.cities.includes(city) && <Check size={16} className="text-primary" />}
+                        </button>
+                      ))
                   ) : (
                     <div className="px-4 py-4 text-center text-muted-foreground text-sm">Город не найден</div>
                   )}
@@ -199,8 +198,8 @@ export default function Filters() {
                   className="pl-9 pr-9 bg-muted border-0 rounded-xl h-12 text-base focus-visible:ring-1 focus-visible:ring-primary"
                 />
                 {profInput && (
-                  <button 
-                    onClick={() => { setProfInput(""); setDraftProfession(""); }} 
+                  <button
+                    onClick={() => { setProfInput(""); setDraftProfession(""); }}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
                   >
                     <X size={16} />
@@ -212,17 +211,17 @@ export default function Filters() {
                 <div className="absolute top-full left-0 right-0 mt-1 bg-background border border-border rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto">
                   {popularProfessions.filter(p => p.name.toLowerCase().includes(profInput.toLowerCase())).length > 0 ? (
                     popularProfessions
-                    .filter(p => p.name.toLowerCase().includes(profInput.toLowerCase()))
-                    .map(p => (
-                      <button
-                        key={p.name}
-                        onClick={() => handleProfSelect(p.name)}
-                        className="w-full px-4 py-3 text-left hover:bg-muted flex items-center justify-between transition-colors border-b border-border last:border-0"
-                      >
-                        <span className="text-base">{p.name}</span>
-                        <span className="text-sm text-muted-foreground">{p.count}</span>
-                      </button>
-                    ))
+                      .filter(p => p.name.toLowerCase().includes(profInput.toLowerCase()))
+                      .map(p => (
+                        <button
+                          key={p.name}
+                          onClick={() => handleProfSelect(p.name)}
+                          className="w-full px-4 py-3 text-left hover:bg-muted flex items-center justify-between transition-colors border-b border-border last:border-0"
+                        >
+                          <span className="text-base">{p.name}</span>
+                          <span className="text-sm text-muted-foreground">{p.count}</span>
+                        </button>
+                      ))
                   ) : (
                     <div className="px-4 py-4 text-center text-muted-foreground text-sm">Профессия не найдена</div>
                   )}
@@ -232,30 +231,27 @@ export default function Filters() {
           </FilterSection>
 
           {/* Salary */}
-          <FilterSection title="Зарплата">
+          <FilterSection title="Зарплата (сом)">
             <div className="grid grid-cols-2 gap-3 mb-1">
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">|</span>
-                <Input 
-                  placeholder="От" 
+                <Input
+                  placeholder="От"
                   type="number"
                   value={draftFilters.salaryFrom}
                   onChange={(e) => setDraftSalaryFrom(e.target.value)}
-                  className={`pl-6 bg-muted border-0 rounded-xl h-12 text-base focus-visible:ring-1 focus-visible:ring-primary ${salaryError ? "border-2 border-[#E24B4A] bg-red-50" : ""}`} 
+                  className={`pl-6 bg-muted border-0 rounded-xl h-12 text-base focus-visible:ring-1 focus-visible:ring-primary ${salaryError ? "border-2 border-[#E24B4A] bg-red-50" : ""}`}
                 />
               </div>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">|</span>
-                <Input 
-                  placeholder="До" 
+                <Input
+                  placeholder="До"
                   type="number"
                   value={draftFilters.salaryTo}
                   onChange={(e) => setDraftSalaryTo(e.target.value)}
-                  className={`pl-6 bg-muted border-0 rounded-xl h-12 text-base focus-visible:ring-1 focus-visible:ring-primary ${salaryError ? "border-2 border-[#E24B4A] bg-red-50" : ""}`} 
+                  className={`pl-6 bg-muted border-0 rounded-xl h-12 text-base focus-visible:ring-1 focus-visible:ring-primary ${salaryError ? "border-2 border-[#E24B4A] bg-red-50" : ""}`}
                 />
               </div>
             </div>
-            <p className="text-[12px] text-[#999]">сом в месяц</p>
             {salaryError && <p className="text-[12px] text-[#E24B4A] mt-1">Укажите корректный диапазон</p>}
           </FilterSection>
 
@@ -285,8 +281,8 @@ export default function Filters() {
               <Wifi size={16} className="text-muted-foreground" />
               <h3 className="text-[13px] font-medium text-[#111]">Удалённая работа</h3>
             </div>
-            <Switch 
-              checked={draftFilters.remote} 
+            <Switch
+              checked={draftFilters.remote}
               onCheckedChange={setDraftRemote}
               className="data-[state=checked]:bg-primary"
             />
@@ -330,13 +326,8 @@ export default function Filters() {
         {/* Action Buttons */}
         <div className="fixed bottom-0 left-0 right-0 lg:left-[260px] p-4 bg-background border-t border-[#EBEBEB] z-40">
           <div className="flex items-center justify-center gap-3">
-            <button 
-              disabled={salaryError || (resultCount === 0 && !isCounting)}
-              className={`w-full max-w-[220px] h-14 rounded-2xl text-lg font-bold transition-all flex items-center justify-center ${
-                salaryError || (resultCount === 0 && !isCounting)
-                  ? "bg-muted text-muted-foreground cursor-not-allowed"
-                  : "bg-gradient-to-r from-[#B1B6F0] to-[#989EE7] text-white shadow-lg active:scale-[0.98]"
-              }`}
+            <button
+              className={`w-full max-w-[220px] h-12 rounded-2xl text-base font-bold transition-all flex items-center justify-center bg-primary text-white `}
               onClick={handleApply}
             >
               {isCounting ? (
@@ -349,7 +340,7 @@ export default function Filters() {
             </button>
             <button
               onClick={resetAll}
-              className="px-6 h-14 rounded-2xl text-lg font-bold border-2 border-[#EBEBEB] hover:bg-muted transition-colors text-foreground active:scale-[0.98]"
+              className="px-6 h-12 max-w-[220px] w-full  rounded-2xl text-base font-bold border-2 border-[#EBEBEB] hover:bg-muted transition-colors text-foreground active:scale-[0.98]"
             >
               Сбросить
             </button>
