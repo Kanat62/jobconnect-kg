@@ -68,11 +68,11 @@ export const categories = [
 ];
 
 export const featuredCompanies = [
-  { id: "1", name: "Бета Сторес", badge: "Стабильный доход", logo: "🏪", banner: "/src/assets/1200x800_ru.png" },
-  { id: "2", name: "Шоро", badge: "Большая команда", logo: "🍶", banner: "/src/assets/online_credit_ru.webp" },
-  { id: "3", name: "Дордой Плаза", badge: "Карьерный рост", logo: "🏬", banner: "/src/assets/Tumar-------_site-1400x800.jpg" },
-  { id: "4", name: "Мегаком", badge: "Соц. пакет", logo: "📱", banner: "/src/assets/IMG_4342.png" },
-  { id: "5", name: "Газпром Нефть", badge: "Высокий оклад", logo: "⛽", banner: "/src/assets/vector-business-card-template-taxi-260nw-2283898951.jpg" },
+  { id: "1", name: "Бета Сторес", badge: "Стабильный доход", logo: "🏪", banner: "/banners/beta-stores.jpg" },
+  { id: "2", name: "Шоро", badge: "Большая команда", logo: "🍶", banner: "/banners/shoro.jpg" },
+  { id: "3", name: "Дордой Плаза", badge: "Карьерный рост", logo: "🏬", banner: "/banners/frunze.jpg" },
+  { id: "4", name: "Мегаком", badge: "Соц. пакет", logo: "📱", banner: "/banners/o-mobile.jpg" },
+  { id: "5", name: "Газпром Нефть", badge: "Высокий оклад", logo: "⛽", banner: "/banners/demir-bank.jpg" },
 ];
 
 export const mockJobs: Job[] = [
